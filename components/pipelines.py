@@ -53,15 +53,15 @@ generator_model = "deepseek-r1"
 ###################################################################################################
 
 
-def create_document_store(recreate_index: bool = False) -> QdrantDocumentStore:
+def create_document_store() -> QdrantDocumentStore:
     return QdrantDocumentStore(
         url=qdrant_url,
         index=embedding_name,
         embedding_dim=embedding_dim,
-        on_disk=True,
-        recreate_index=recreate_index,
+        recreate_index=False, # enable only to recreate the index and not connect to the existing one
         use_sparse_embeddings=True,
         sparse_idf=True,
+        on_disk=True,
     )
 
 
@@ -89,7 +89,7 @@ def create_index_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
     
     sparse_doc_embedder = FastembedSparseDocumentEmbedder(
         model=sparse_embedder_model,
-        local_files_only=True, # TRUE: ONLY USE MODELS FROM CACHE DIR 
+        local_files_only=True, # enable to only use cached models
     )
     sparse_doc_embedder.warm_up()
 
@@ -132,7 +132,7 @@ def create_query_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
 
     sparse_query_embedder = FastembedSparseTextEmbedder(
         model=sparse_embedder_model,
-        local_files_only=True, # TRUE: ONLY USE MODELS FROM CACHE DIR 
+        local_files_only=True, # enable to only use cached models
     )
     sparse_query_embedder.warm_up()
     
@@ -145,7 +145,7 @@ def create_query_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
     ranker = FastembedRanker(
         model_name=ranker_model,
         top_k=5,
-        local_files_only=True, # TRUE: ONLY USE MODELS FROM CACHE DIR
+        local_files_only=True, # enable to only use cached models
     )
     ranker.warm_up()
 

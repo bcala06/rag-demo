@@ -21,12 +21,12 @@ tracing.enable_tracing(LoggingTracer(tags_color_strings={"haystack.component.inp
 
 class PipelineWrapper(BasePipelineWrapper):
     def setup(self) -> None:
-        self.document_store = create_document_store(recreate_index=True)
+        self.document_store = create_document_store()
         self.pipeline = create_index_pipeline(self.document_store)
 
     def run_api(self, files: Optional[List[UploadFile]] = None) -> str:
         if not files:
-            return "No files provided for indexing."
+            return "No files provided for indexing"
         
         log.trace(f"Running pipeline with files: {[file.filename for file in files]}")
         os.makedirs("uploaded_documents", exist_ok=True)

@@ -19,7 +19,7 @@ tracing.enable_tracing(LoggingTracer(tags_color_strings={"haystack.component.inp
 
 class PipelineWrapper(BasePipelineWrapper):
     def setup(self) -> None:
-        self.document_store = create_document_store(recreate_index=False)
+        self.document_store = create_document_store()
         self.pipeline = create_query_pipeline(self.document_store)
 
     def run_api(self, query: str) -> str:
