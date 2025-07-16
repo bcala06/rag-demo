@@ -1,0 +1,43 @@
+services:
+  hayhooks:
+    build: .
+    container_name: hayhooks
+    ports:
+      - "1416:1416"
+    expose:
+      - 1416
+    volumes:
+      - ./pipelines:/code/pipelines
+      - ./components:/code/components
+      - ./cache:/code/cache
+    environment:
+      - PYTHONPATH=.
+      - PYTHONDONTWRITEBYTECODE=1
+      - OLLAMA_URL=http://host.docker.internal:11434
+      - QDRANT_URL=http://host.docker.internal:6333
+      - TIKA_URL=http://tika:9998
+      - HAYHOOKS_PIPELINES_DIR=/code/pipelines
+      - FASTEMBED_CACHE_PATH=/code/cache/models/fastembed
+      - NLTK_DATA=/code/cache/nltk_data
+      - TIKTOKEN_CACHE_DIR=/code/cache/tiktoken
+      - LOG=DEBUG
+    depends_on:
+      - tika
+    restart: unless-stopped
+
+  tika:
+    image: apache/tika:latest
+    container_name: tika
+    ports:
+      - "9998:9998"
+    restart: unless-stopped
+
+  # qdrant:
+  #   image: qdrant/qdrant:latest
+  #   container_name: qdrant
+  #   ports:
+  #     - 6333:6333
+  #     - 6334:6334
+  #   volumes:
+  #     - ./qdrant_data:/qdrant/storage
+  #   restart: always
