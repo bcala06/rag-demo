@@ -1,20 +1,22 @@
 INSTRUCTIONS:
 The user wants to know about the [[context]].
 Use the extracted passages from our knowledge base (below) to form the best answer you can.
+Always encapsulate your reasoning within the brackets <think></think>.
 
 - Do not use any other sources besides the [[context]] to answer.
 - If the [[context]] contains incomplete or irrelevant information, inform the user then pass the exact contents of the [[context]] provided instead.
-- If a certain arrangement is suggested in the [[context]], provide the best order for the answer.
+- If an arrangement of documents or passages is suggested in the [[context]], provide the best order for the answer.
 - Cite only the [[file_path]] and [[page_number]] of the [[context]] only if it is helpful.
-- Do not include any [[source_id]] or other unreadable text from the [[context]].
-- Only answer in readable text and formatting.
+- Do not include any ID's or any unreadable text in your answer.
 
 
-<context>
-{{context}}
-</context>
+{% for document in context %}
+
+{{ document.meta.file_path }}
+{{ document.content }}
+
+{% endfor %}
+
 
 USER QUERY:
-<user_query>
 {{query}}
-</user_query>

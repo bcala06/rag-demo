@@ -10,6 +10,7 @@ from haystack.components.converters import TikaDocumentConverter
 from haystack.components.preprocessors import RecursiveDocumentSplitter, DocumentCleaner
 from haystack.components.writers import DocumentWriter
 from haystack.components.builders import PromptBuilder, ChatPromptBuilder
+from haystack.components.rankers import MetaFieldRanker
 
 # Qdrant components
 from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
@@ -70,7 +71,7 @@ def create_index_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
     cleaner = DocumentCleaner()
 
     chunker = RecursiveDocumentSplitter(
-        split_length=800,
+        split_length=1000,
         split_overlap=0,
         split_unit="token",
         separators=["\n\n", "sentence", "\n", " "],
@@ -149,12 +150,19 @@ def create_query_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
     )
     ranker.warm_up()
 
+    # reranks based on file_name relevance (not always helpful)
+    meta_ranker = MetaFieldRanker(
+        meta_field="file_path",
+        weight=0.5,
+        top_k=2,
+    )
+
     generator = OllamaChatGenerator(
         model=generator_model,
         url=ollama_url,
         generation_kwargs={
             "num_predict": -1,
-            "temperature": 0.7,
+            "temperature": 0.6,
             "n_ctx": 8192,
         }
     )
@@ -164,13 +172,15 @@ def create_query_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
     query_pipeline.add_component("sparse_query_embedder", sparse_query_embedder)
     query_pipeline.add_component("retriever", retriever)
     query_pipeline.add_component("ranker", ranker)
+    query_pipeline.add_component("meta_ranker", meta_ranker)
     query_pipeline.add_component("prompt_builder", prompt_builder)
     query_pipeline.add_component("generator", generator)
 
     query_pipeline.connect("dense_query_embedder.embedding", "retriever.query_embedding")
     query_pipeline.connect("sparse_query_embedder.sparse_embedding", "retriever.query_sparse_embedding")
     query_pipeline.connect("retriever.documents", "ranker.documents")
-    query_pipeline.connect("ranker.documents", "prompt_builder.context")
+    query_pipeline.connect("ranker.documents", "meta_ranker.documents")
+    query_pipeline.connect("meta_ranker.documents", "prompt_builder.context")
     query_pipeline.connect("prompt_builder.prompt", "generator.messages")
 
     return query_pipeline
