@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy only gradio requirements first for caching
+COPY gradio/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of gradio files
+COPY gradio /app
+
+CMD ["python", "app.py"]
