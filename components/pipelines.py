@@ -48,7 +48,7 @@ dense_embedder_model = "nomic-embed-text:v1.5"
 sparse_embedder_model = "Qdrant/bm42-all-minilm-l6-v2-attentions"
 
 ranker_model = "jinaai/jina-reranker-v1-turbo-en"
-generator_model = "deepseek-r1"
+generator_model = "deepseek-r1:latest"
 
 
 ###################################################################################################
@@ -146,15 +146,15 @@ def create_query_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
     ranker = FastembedRanker(
         model_name=ranker_model,
         top_k=5,
-        local_files_only=True, # enable to only use cached models
+        local_files_only=True, # only use models from "/cache/models/fastembed"
     )
     ranker.warm_up()
 
-    # reranks based on file_name relevance (not always helpful)
+    # reranks based on filename relevance to query
     meta_ranker = MetaFieldRanker(
         meta_field="file_path",
         weight=0.5,
-        top_k=2,
+        top_k=3,
     )
 
     generator = OllamaChatGenerator(
@@ -162,7 +162,7 @@ def create_query_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
         url=ollama_url,
         generation_kwargs={
             "num_predict": -1,
-            "temperature": 0.6,
+            "temperature": 0.5,
             "n_ctx": 8192,
         }
     )

@@ -149,7 +149,9 @@ with gr.Blocks(
                     height=600,
                 ),
                 examples=[
-                    'Give me the financial report for Apple Inc. on their Q3 2022 Form 10-Q.',
+                    'What is the current status of renewable energy in the Philippines?',
+                    'What are the goals for renewable energy policies?',
+                    'What are the difficulties/challenges with implementing renewable energy?'
                 ],
             )
 
