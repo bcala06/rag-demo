@@ -145,13 +145,13 @@ with gr.Blocks(
                 fill_height=True,
                 chatbot=gr.Chatbot(
                     type="messages",
-                    allow_tags=["think"],
                     height=600,
                 ),
                 examples=[
                     'What is the current status of renewable energy in the Philippines?',
                     'What are the difficulties/challenges with implementing renewable energy?',
-                    'Give me the conclusion for the research about national legislation and renewable energy.'
+                    'Give me the conclusion for the research about national legislation and renewable energy.',
+                    'How is climate change related to renewable energy?',
                 ],
             )
 

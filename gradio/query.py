@@ -2,6 +2,7 @@ import os
 import gradio as gr
 import requests
 import json
+import time
 from pathlib import Path
 from typing import List, Optional
 from qdrant_client import QdrantClient, models
@@ -18,6 +19,10 @@ qdrant_client = QdrantClient(url=QDRANT_URL)
 
 def chat(message, history):
     """Handle chat messages"""
+    
+    if not len(message):
+        raise gr.Error("Chat messages cannot be empty")
+
     payload = {
         "model": MODEL_NAME,
         "messages": [{"role": "user", "content": message}],
@@ -32,17 +37,21 @@ def chat(message, history):
         response.raise_for_status()
         
         chunks = []
+        message = ""
+        placeholder = "Thinking."
+        
         for line in response.iter_lines():
             if line:
                 decoded_line = line.decode("utf-8")
                 if decoded_line.startswith("data:"):
                     chunk = decoded_line[5:].strip()
-                    if chunk != "[DONE]":
-                        try:
-                            data = json.loads(chunk)
-                            delta = data["choices"][0]["delta"]
-                            if "content" in delta:
+                    try:
+                        data = json.loads(chunk)
+                        delta = data["choices"][0]["delta"]
+                        if "content" in delta:
+                            if delta["content"] != "":
                                 chunks.append(delta["content"])
-                                yield "".join(chunks)
-                        except:
-                            pass
+                                message = "".join(chunks)
+                                yield message
+                    except:
+                        pass
