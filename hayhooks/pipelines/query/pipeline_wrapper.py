@@ -5,7 +5,6 @@ from typing import Generator, List, Union, Optional
 from haystack import tracing
 from haystack.tracing.logging_tracer import LoggingTracer
 
-from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
 from hayhooks import get_last_user_message, streaming_generator, BasePipelineWrapper, log
 
 from components.pipelines import create_document_store, create_query_pipeline
@@ -19,8 +18,7 @@ tracing.enable_tracing(LoggingTracer(tags_color_strings={"haystack.component.inp
 
 class PipelineWrapper(BasePipelineWrapper):
     def setup(self) -> None:
-        self.document_store = create_document_store()
-        self.pipeline = create_query_pipeline(self.document_store)
+        self.pipeline = create_query_pipeline()
 
     def run_api(self, query: str) -> str:
         log.trace(f"Running pipeline with prompt: {query}")

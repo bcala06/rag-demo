@@ -6,11 +6,10 @@ from typing import Generator, List, Union, Optional
 from haystack import tracing
 from haystack.tracing.logging_tracer import LoggingTracer
 
-from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
 from hayhooks import BasePipelineWrapper, log
 from fastapi import UploadFile, File
 
-from components.pipelines import create_document_store, create_index_pipeline
+from components.pipelines import create_index_pipeline
 
 # LOGGING
 logging.basicConfig(format="%(levelname)s - %(name)s - %(message)s", level=logging.WARNING)
@@ -21,8 +20,7 @@ tracing.enable_tracing(LoggingTracer(tags_color_strings={"haystack.component.inp
 
 class PipelineWrapper(BasePipelineWrapper):
     def setup(self) -> None:
-        self.document_store = create_document_store()
-        self.pipeline = create_index_pipeline(self.document_store)
+        self.pipeline = create_index_pipeline()
 
     def run_api(self, files: Optional[List[UploadFile]] = None) -> str:
         if not files:

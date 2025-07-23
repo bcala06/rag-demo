@@ -66,7 +66,9 @@ def create_document_store() -> QdrantDocumentStore:
     )
 
 
-def create_index_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
+def create_index_pipeline() -> Pipeline:
+    document_store = create_document_store()
+
     converter = TikaDocumentConverter(tika_url=tika_url)
     cleaner = DocumentCleaner()
 
@@ -116,7 +118,9 @@ def create_index_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
     return indexing_pipeline
 
 
-def create_query_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
+def create_query_pipeline() -> Pipeline:
+    document_store = create_document_store()
+
     try:
         script_dir = Path(__file__).parent
         prompt_path = script_dir / "rag_prompt.txt"
@@ -164,7 +168,8 @@ def create_query_pipeline(document_store: QdrantDocumentStore) -> Pipeline:
             "num_predict": -1,
             "temperature": 0.5,
             "n_ctx": 8192,
-        }
+        },
+        think=True,
     )
 
     query_pipeline = Pipeline()
