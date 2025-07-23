@@ -1,12 +1,13 @@
 FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /gradio
 
-# Copy only gradio requirements first for caching
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY gradio/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of gradio files
-COPY gradio /app
+COPY gradio /gradio
 
 CMD ["python", "app.py"]

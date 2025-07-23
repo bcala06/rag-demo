@@ -9,7 +9,7 @@ services:
     expose:
       - 7860
     volumes:
-      - ./gradio:/app
+      - ./gradio:/gradio
     environment:
       - PYTHONDONTWRITEBYTECODE=1
       - GRADIO_SERVER_NAME=0.0.0.0
@@ -22,23 +22,25 @@ services:
 
   hayhooks:
     container_name: hayhooks
-    build: .
+    build:
+      context: .
+      dockerfile: hayhooks/Dockerfile.hayhooks
     ports:
       - "1416:1416"
     volumes:
-      - ./pipelines:/code/pipelines
-      - ./components:/code/components
-      - ./cache:/code/cache
+      - ./hayhooks:/hayhooks
     environment:
       - PYTHONPATH=.
       - PYTHONDONTWRITEBYTECODE=1
+      - HAYHOOKS_HOST="0.0.0.0"
+      - HAYHOOKS_PORT=1416
       - OLLAMA_URL=http://host.docker.internal:11434
       - QDRANT_URL=http://qdrant:6333
       - TIKA_URL=http://tika:9998
-      - HAYHOOKS_PIPELINES_DIR=/code/pipelines
-      - FASTEMBED_CACHE_PATH=/code/cache/models/fastembed
-      - NLTK_DATA=/code/cache/nltk_data
-      - TIKTOKEN_CACHE_DIR=/code/cache/tiktoken
+      - HAYHOOKS_PIPELINES_DIR=/hayhooks/pipelines
+      - FASTEMBED_CACHE_PATH=/hayhooks/cache/models/fastembed
+      - NLTK_DATA=/hayhooks/cache/nltk_data
+      - TIKTOKEN_CACHE_DIR=/hayhooks/cache/tiktoken
       - LOG=DEBUG
     depends_on:
       - tika

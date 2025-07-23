@@ -59,7 +59,7 @@ def create_document_store() -> QdrantDocumentStore:
         url=qdrant_url,
         index=embedding_name,
         embedding_dim=embedding_dim,
-        recreate_index=False, # enable only to recreate the index and not connect to the existing one
+        recreate_index=False, # when true, discards existing collection and makes new one
         use_sparse_embeddings=True,
         sparse_idf=True,
         on_disk=True,
