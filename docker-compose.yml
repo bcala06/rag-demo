@@ -32,7 +32,7 @@ services:
     environment:
       - PYTHONPATH=.
       - PYTHONDONTWRITEBYTECODE=1
-      - HAYHOOKS_HOST="0.0.0.0"
+      - HAYHOOKS_HOST=0.0.0.0
       - HAYHOOKS_PORT=1416
       - OLLAMA_URL=http://host.docker.internal:11434
       - QDRANT_URL=http://qdrant:6333

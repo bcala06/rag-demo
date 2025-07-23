@@ -150,8 +150,8 @@ with gr.Blocks(
                 ),
                 examples=[
                     'What is the current status of renewable energy in the Philippines?',
-                    'What are the goals for renewable energy policies?',
                     'What are the difficulties/challenges with implementing renewable energy?'
+                    'Give me the conclusion for the research about national legislation and renewable energy.'
                 ],
             )
 

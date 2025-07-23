@@ -29,11 +29,11 @@ class PipelineWrapper(BasePipelineWrapper):
             return "No files provided for indexing"
         
         log.trace(f"Running pipeline with files: {[file.filename for file in files]}")
-        os.makedirs("uploaded_documents", exist_ok=True)
+        os.makedirs("documents", exist_ok=True)
         saved_file_paths = []
 
         for file in files:
-            file_path = os.path.join("uploaded_documents", file.filename)
+            file_path = os.path.join("documents", file.filename)
             file.file.seek(0)
             file_content = file.file.read()
             with open(file_path, "wb") as buffer:
