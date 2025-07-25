@@ -59,6 +59,31 @@ The interface contains two tabs:
 
 ## Notes
 
-- To host the app online, expose the Gradio app (`0.0.0.0:7860` by default).
+### Hosting
+
+- For web hosting, expose only the Gradio app (`0.0.0.0:7860` by default).
 - All model inference and retrieval happen on the host machine.
-- Reasoning is enabled for `deepseek-r1` which may take longer for responses.
+- Reasoning is enabled by default for `deepseek-r1` which may take longer for responses.
+
+### Offline Usage
+
+FastEmbed models, nltk, and tiktoken are cached inside the project directory. This way, the app can be configured to run indexing and querying offline (no downloads needed).
+
+The following steps are only required for offline usage:
+
+1. Compose/run the app with an internet connection at least once beforehand. The following automatically cached inside `hayhooks\cache\`:
+
+   - `models\fastembed\`
+   - `tiktoken`
+
+2. Download and place `nltk_data` inside `hayhooks\cache\`. You can get the files by following the steps [here](https://www.nltk.org/data.html).
+
+3. Set the parameters for the FastEmbed models in `hayhooks\components\pipelines.py` as follows:
+
+   ```python
+   sparse_doc_embedder = FastembedSparseDocumentEmbedder(local_files_only=True)
+   sparse_query_embedder = FastembedSparseTextEmbedder(local_files_only=True)
+   ranker = FastembedRanker(local_files_only=True)
+   ```
+
+4. Compose/recompose the app.

@@ -92,7 +92,7 @@ def create_index_pipeline() -> Pipeline:
     
     sparse_doc_embedder = FastembedSparseDocumentEmbedder(
         model=sparse_embedder_model,
-        local_files_only=True, # enable to only use cached models
+        local_files_only=False, # uses cached models (for offline)
     )
     sparse_doc_embedder.warm_up()
 
@@ -137,7 +137,7 @@ def create_query_pipeline() -> Pipeline:
 
     sparse_query_embedder = FastembedSparseTextEmbedder(
         model=sparse_embedder_model,
-        local_files_only=True, # enable to only use cached models
+        local_files_only=False, # uses cached models (for offline)
     )
     sparse_query_embedder.warm_up()
     
@@ -150,7 +150,7 @@ def create_query_pipeline() -> Pipeline:
     ranker = FastembedRanker(
         model_name=ranker_model,
         top_k=5,
-        local_files_only=True, # only use models from "/cache/models/fastembed"
+        local_files_only=False, # uses cached models (for offline)
     )
     ranker.warm_up()
 
