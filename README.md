@@ -1,6 +1,6 @@
 # RAG Proof-of-Concept
 
-This project is a hybrid Retrieval-Augmented Generation (RAG) proof-of-concept that combines open-source tools for document indexing and conversational AI. It features hybrid retrieval with reranking and a user-friendly interface.
+This project is a Retrieval-Augmented Generation (RAG) proof-of-concept that combines open-source tools for document indexing and conversational AI. It features hybrid retrieval with reranking and a user-friendly interface.
 
 ## Overview
 
@@ -35,7 +35,7 @@ All of the backend components are managed with Haystack. Hayhooks is used to man
 
    - `docker compose up`
 
-3. Access the services via your browser:
+3. Access the services through the following URLs:
 
    | Service  | URL                        |
    | -------- | -------------------------- |
@@ -59,6 +59,6 @@ The interface contains two tabs:
 
 ## Notes
 
-- To host the app online, expose the Gradio app from `0.0.0.0:7860`.
+- To host the app online, expose the Gradio app (`0.0.0.0:7860` by default).
 - All model inference and retrieval happen on the host machine.
 - Reasoning is enabled for `deepseek-r1` which may take longer for responses.
