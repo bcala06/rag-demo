@@ -4,24 +4,25 @@ This project is a Retrieval-Augmented Generation (RAG) proof-of-concept that com
 
 ## Overview
 
-All of the backend components are managed with Haystack. Hayhooks is used to manage the API for the pipeline. Gradio is used as the interface to interact with the Hayhooks and Qdrant endpoints.
+- [Haystack](https://haystack.deepset.ai/) is used for model integration and pipeline creation.
+- [Hayhooks](https://github.com/deepset-ai/hayhooks) is used to manage the API for the pipeline.
+- [Gradio](https://www.gradio.app/) is used for the interface for the Hayhooks and Qdrant endpoints.
 
-| Component                | Model                                     | Source    |
-| ------------------------ | ----------------------------------------- | --------- |
-| Vector Storage/Retriever | Qdrant Vector Database                    | Qdrant    |
-| Document Converter       | Tika                                      | Apache    |
-| Dense Embedder           | `nomic-embed-text:v1.5`                   | Ollama    |
-| Sparse Embedder          | `Qdrant/bm42-all-minilm-l6-v2-attentions` | FastEmbed |
-| Reranker                 | `jinaai/jina-reranker-v1-turbo-en`        | FastEmbed |
-| Generator                | `deepseek-r1:latest`                      | Ollama    |
+| Component                | Model                                     | Source                                                |
+| ------------------------ | ----------------------------------------- | ----------------------------------------------------- |
+| Vector Storage/Retriever | Qdrant Vector Database                    | [Qdrant](https://qdrant.tech/qdrant-vector-database/) |
+| Document Converter       | Tika                                      | [Apache](https://tika.apache.org/)                    |
+| Dense Embedder           | `nomic-embed-text:v1.5`                   | [Ollama](https://ollama.com/library/nomic-embed-text) |
+| Sparse Embedder          | `Qdrant/bm42-all-minilm-l6-v2-attentions` | [FastEmbed](https://github.com/qdrant/fastembed)      |
+| Reranker                 | `jinaai/jina-reranker-v1-turbo-en`        | [FastEmbed](https://github.com/qdrant/fastembed)      |
+| Generator                | `deepseek-r1:latest`                      | [Ollama](https://ollama.com/library/deepseek-r1)      |
 
 ## Getting Started
 
-### Requirements
+### Prerequisites
 
-- Docker
-- Docker Compose
-- Ollama
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Ollama](https://ollama.com/download)
 
 ### Running the App
 
@@ -49,21 +50,26 @@ The interface contains two tabs:
 
 ### 1. Indexing
 
-- Upload documents for embedding and storage in Qdrant.
+- Upload documents into the indexing pipeline. Uploaded documents are copied into `hayhooks\documents\`.
 - Remove previously indexed files from the database.
 
 ### 2. Chat
 
-- Ask questions about the uploaded documents.
-- The RAG LLM responds based on retrieved context from indexed files.
+- Ask a chatbot about the uploaded documents.
+- The chatbot responds based on retrieved context from indexed files.
 
 ## Notes
+
+### Performance
+
+- The pipeline is configured to always perform retrieval based on the user's latest query. This is a limitation with the implementation that can be addressed in the future.
+- Reasoning is enabled by default for `deepseek-r1` which may take longer for response generation.
 
 ### Hosting
 
 - For web hosting, expose only the Gradio app (`0.0.0.0:7860` by default).
 - All model inference and retrieval happen on the host machine.
-- Reasoning is enabled by default for `deepseek-r1` which may take longer for responses.
+- Hayhooks implementation is synchronous, but async is possible with some modifications.
 
 ### Offline Usage
 
@@ -71,14 +77,11 @@ FastEmbed models, nltk, and tiktoken are cached inside the project directory. Th
 
 The following steps are only required for offline usage:
 
-1. Compose/run the app with an internet connection at least once beforehand. The following automatically cached inside `hayhooks\cache\`:
-
-   - `models\fastembed\`
-   - `tiktoken`
+1. Compose/run the app with an internet connection at least once beforehand. The following should be cached in `hayhooks\cache\`: `models\fastembed\`, `tiktoken`.
 
 2. Download and place `nltk_data` inside `hayhooks\cache\`. You can get the files by following the steps [here](https://www.nltk.org/data.html).
 
-3. Set the parameters for the FastEmbed models in `hayhooks\components\pipelines.py` as follows:
+3. Add the parameters for the following components in `hayhooks\components\pipelines.py`:
 
    ```python
    sparse_doc_embedder = FastembedSparseDocumentEmbedder(local_files_only=True)
