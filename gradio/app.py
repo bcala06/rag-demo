@@ -45,7 +45,24 @@ custom_css = """
 .scrollable-file-list .wrap > div:last-child {
     border-bottom: none;
 }
+.transparent-button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.transparent-button:hover {
+    background: transparent !important;
+    border: none !important;
+}
 """
+
+
+
+# only show upload tab if username == 'admin'
+def toggle_upload_tab(request: gr.Request):
+    is_admin = hasattr(request, 'username') and request.username == 'admin'
+    return gr.update(visible=is_admin)
+
 
 with gr.Blocks(
         title="PNOC RAG LLM Portal",  
@@ -72,9 +89,34 @@ with gr.Blocks(
             "<h1 style='font-size: 2.5rem; display: flex; align-items: center; height: 100px;'>PNOC Document RAG Portal</h1>",
             padding=False,
         )
-    
+        gr.Button(
+            "Logout",
+            link="/logout",
+            variant="stop",
+            elem_classes="transparent-button",
+            scale=0,
+        )
+
     with gr.Tabs():
-        with gr.TabItem("Document Upload"):
+        with gr.TabItem("Chat"):
+            chat_interface = gr.ChatInterface(
+                fn=chat,
+                type="messages",
+                save_history=True,
+                fill_height=True,
+                chatbot=gr.Chatbot(
+                    type="messages",
+                    height=600,
+                ),
+                examples=[
+                    'What is the current status of renewable energy in the Philippines?',
+                    'What are the difficulties/challenges with implementing renewable energy?',
+                    'Give me the conclusion for the research about national legislation and renewable energy.',
+                    'How is climate change related to renewable energy?',
+                ],
+            )
+
+        with gr.TabItem("Document Upload", visible=False) as upload_tab:
             with gr.Row(scale=1, equal_height=True):
                 with gr.Column():
                     gr.Markdown("### Add files to index")
@@ -136,26 +178,13 @@ with gr.Blocks(
                 fn=lambda: gr.CheckboxGroup(choices=get_uploaded_files()),
                 outputs=file_list
             )
-        
-        with gr.TabItem("Chat"):
-            chat_interface = gr.ChatInterface(
-                fn=chat,
-                type="messages",
-                save_history=True,
-                fill_height=True,
-                chatbot=gr.Chatbot(
-                    type="messages",
-                    height=600,
-                ),
-                examples=[
-                    'What is the current status of renewable energy in the Philippines?',
-                    'What are the difficulties/challenges with implementing renewable energy?',
-                    'Give me the conclusion for the research about national legislation and renewable energy.',
-                    'How is climate change related to renewable energy?',
-                ],
-            )
+
+        # Update toggle upload tab
+        app.load(toggle_upload_tab, None, upload_tab)
 
 if __name__ == "__main__":
     app.launch(
+        toggle_upload_tab,
         favicon_path=ICON_PATH,
+        auth=[("user", "pass"), ("admin", "pass")],
     )

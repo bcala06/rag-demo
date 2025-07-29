@@ -60,16 +60,21 @@ The interface contains two tabs:
 
 ## Notes
 
-### Performance
-
-- The pipeline is configured to always perform retrieval based on the user's latest query. This is a limitation with the implementation that can be addressed in the future.
-- Reasoning is enabled by default for `deepseek-r1` which may take longer for response generation.
-
 ### Hosting
 
 - For web hosting, expose only the Gradio app (`0.0.0.0:7860` by default).
 - All model inference and retrieval happen on the host machine.
 - Hayhooks implementation is synchronous, but async is possible with some modifications.
+
+### Performance
+
+- The pipeline is configured to always perform retrieval based on the user's latest query. This is a limitation with the implementation that can be addressed in the future.
+- Reasoning is enabled by default for `deepseek-r1` which may take longer for response generation.
+
+### Limitations
+
+- The pipeline is configured to retrieve documents after **every** query. This means that succeeding messages may not always be relevant to the initial query. For best results, the user should contain their entire query on a single message.
+- Currently, the Gradio app only provides basic user authentication. However, more robust implementations such as [OAuth](https://www.gradio.app/guides/sharing-your-app#o-auth-with-external-providers) are possible and recommended for production.
 
 ### Offline Usage
 
