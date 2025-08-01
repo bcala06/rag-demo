@@ -1,12 +1,10 @@
-import os
-import gradio as gr
-import requests
 import json
-import time
-from pathlib import Path
-from typing import List, Optional
-from qdrant_client import QdrantClient, models
+import os
 
+import requests
+from qdrant_client import QdrantClient
+
+import gradio as gr
 
 HAYHOOKS_URL = os.getenv("HAYHOOKS_URL", "http://localhost:1416")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
@@ -38,7 +36,6 @@ def chat(message, history):
         
         chunks = []
         message = ""
-        placeholder = "Thinking."
         
         for line in response.iter_lines():
             if line:
@@ -53,5 +50,5 @@ def chat(message, history):
                                 chunks.append(delta["content"])
                                 message = "".join(chunks)
                                 yield message
-                    except:
+                    except Exception:
                         pass

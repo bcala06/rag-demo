@@ -1,10 +1,9 @@
 import os
-import gradio as gr
-import requests
 from pathlib import Path
-from typing import List, Optional
-from qdrant_client import QdrantClient, models
+from typing import List
 
+import requests
+from qdrant_client import QdrantClient, models
 
 HAYHOOKS_URL = os.getenv("HAYHOOKS_URL", "http://localhost:1416")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
