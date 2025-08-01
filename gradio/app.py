@@ -121,7 +121,7 @@ with gr.Blocks(
                     with gr.Row(scale=1, height=500):
                         file_input = gr.File(
                             file_count="multiple",
-                            file_types=[".pdf", ".txt", ".doc", ".docx"],
+                            file_types=[".csv", ".doc", ".docx", ".html", ".pdf", ".txt", ".xlsx"],
                             show_label=False,
                             height=480,
                         )
