@@ -1,15 +1,13 @@
-import os
 import logging
-import shutil
-from typing import Generator, List, Union, Optional
+import os
+from typing import List, Optional
 
+from components.pipelines import create_index_pipeline
+from fastapi import UploadFile
 from haystack import tracing
 from haystack.tracing.logging_tracer import LoggingTracer
 
 from hayhooks import BasePipelineWrapper, log
-from fastapi import UploadFile, File
-
-from components.pipelines import create_index_pipeline
 
 # LOGGING
 logging.basicConfig(format="%(levelname)s - %(name)s - %(message)s", level=logging.WARNING)

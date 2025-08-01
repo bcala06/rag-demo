@@ -1,38 +1,30 @@
 import os
-import logging
 from pathlib import Path
-from typing import Generator, List, Union
 
-from haystack import Document, Pipeline
+from haystack import Pipeline
+from haystack.components.builders import ChatPromptBuilder
+from haystack.components.converters import TikaDocumentConverter
+from haystack.components.preprocessors import DocumentCleaner, RecursiveDocumentSplitter
+from haystack.components.rankers import MetaFieldRanker
+from haystack.components.writers import DocumentWriter
 from haystack.dataclasses import ChatMessage
 from haystack.document_stores.types import DuplicatePolicy
-from haystack.components.converters import TikaDocumentConverter
-from haystack.components.preprocessors import RecursiveDocumentSplitter, DocumentCleaner
-from haystack.components.writers import DocumentWriter
-from haystack.components.builders import PromptBuilder, ChatPromptBuilder
-from haystack.components.rankers import MetaFieldRanker
-
-# Qdrant components
-from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
-from haystack_integrations.components.retrievers.qdrant import (
-    QdrantEmbeddingRetriever,
-    QdrantSparseEmbeddingRetriever,
-    QdrantHybridRetriever 
-)
-
-# FastEmbed components
-from haystack_integrations.components.rankers.fastembed import FastembedRanker
 from haystack_integrations.components.embedders.fastembed import (
-    FastembedTextEmbedder,
-    FastembedDocumentEmbedder,
+    FastembedSparseDocumentEmbedder,
     FastembedSparseTextEmbedder,
-    FastembedSparseDocumentEmbedder
 )
-
-# Ollama components
-from haystack_integrations.components.embedders.ollama import OllamaTextEmbedder, OllamaDocumentEmbedder
-from haystack_integrations.components.generators.ollama import OllamaGenerator, OllamaChatGenerator
-
+from haystack_integrations.components.embedders.ollama import (
+    OllamaDocumentEmbedder,
+    OllamaTextEmbedder,
+)
+from haystack_integrations.components.generators.ollama import (
+    OllamaChatGenerator,
+)
+from haystack_integrations.components.rankers.fastembed import FastembedRanker
+from haystack_integrations.components.retrievers.qdrant import (
+    QdrantHybridRetriever,
+)
+from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
 
 ###################################################################################################
 

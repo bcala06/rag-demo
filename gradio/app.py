@@ -1,6 +1,6 @@
 import gradio as gr
 
-from index import upload_files, get_uploaded_files, delete_files, process_upload
+from index import get_uploaded_files, delete_files, process_upload
 from query import chat
 
 ICON_PATH = "assets/favicon.png"
@@ -57,21 +57,19 @@ custom_css = """
 """
 
 
-
-# only show upload tab if username == 'admin'
+# Only show upload tab if username == 'admin'
 def toggle_upload_tab(request: gr.Request):
-    is_admin = hasattr(request, 'username') and request.username == 'admin'
+    is_admin = hasattr(request, "username") and request.username == "admin"
     return gr.update(visible=is_admin)
 
 
 with gr.Blocks(
-        title="PNOC RAG LLM Portal",  
-        theme=theme,
-        fill_height=True,
-        css=custom_css,
-        # js=light_js, # Forces light mode
-    ) as app:
-
+    title="PNOC RAG LLM Portal",
+    theme=theme,
+    fill_height=True,
+    css=custom_css,
+    # js=light_js, # Forces light mode
+) as app:
     with gr.Row(height=100, equal_height=True):
         gr.Image(
             ICON_PATH,
@@ -109,10 +107,10 @@ with gr.Blocks(
                     height=600,
                 ),
                 examples=[
-                    'What is the current status of renewable energy in the Philippines?',
-                    'What are the difficulties/challenges with implementing renewable energy?',
-                    'Give me the conclusion for the research about national legislation and renewable energy.',
-                    'How is climate change related to renewable energy?',
+                    "What is the current status of renewable energy in the Philippines?",
+                    "What are the difficulties/challenges with implementing renewable energy?",
+                    "Give me the conclusion for the research about national legislation and renewable energy.",
+                    "How is climate change related to renewable energy?",
                 ],
             )
 
@@ -139,7 +137,7 @@ with gr.Blocks(
                             interactive=True,
                             show_label=False,
                             scale=1,
-                            elem_classes=["scrollable-file-list"], # Invokes custom CSS
+                            elem_classes=["scrollable-file-list"],  # Invokes custom CSS
                         )
                     with gr.Row(scale=0):
                         refresh_btn = gr.Button("Refresh File List")
@@ -147,36 +145,31 @@ with gr.Blocks(
 
             with gr.Row(scale=0):
                 output = gr.Textbox(label="Operation Result", lines=2)
-                        
+
             # Initial load of uploaded files
             app.load(
                 fn=lambda: gr.CheckboxGroup(choices=get_uploaded_files()),
                 outputs=file_list,
-                queue=False
+                queue=False,
             )
-            
+
             # Button actions
             submit_btn.click(
-                fn=process_upload,
-                inputs=file_input,
-                outputs=[output, file_list]
+                fn=process_upload, inputs=file_input, outputs=[output, file_list]
             ).then(
                 fn=lambda: gr.CheckboxGroup(choices=get_uploaded_files()),
-                outputs=file_list
+                outputs=file_list,
             )
-            
+
             refresh_btn.click(
-                fn=lambda: gr.update(choices=get_uploaded_files()),
-                outputs=file_list
+                fn=lambda: gr.update(choices=get_uploaded_files()), outputs=file_list
             )
-            
+
             delete_btn.click(
-                fn=delete_files,
-                inputs=file_list,
-                outputs=[output, file_list]
+                fn=delete_files, inputs=file_list, outputs=[output, file_list]
             ).then(
                 fn=lambda: gr.CheckboxGroup(choices=get_uploaded_files()),
-                outputs=file_list
+                outputs=file_list,
             )
 
         # Update toggle upload tab

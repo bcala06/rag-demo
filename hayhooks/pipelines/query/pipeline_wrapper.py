@@ -1,13 +1,16 @@
-import os
 import logging
-from typing import Generator, List, Union, Optional
+from typing import Generator, List, Union
 
+from components.pipelines import create_query_pipeline
 from haystack import tracing
 from haystack.tracing.logging_tracer import LoggingTracer
 
-from hayhooks import get_last_user_message, streaming_generator, BasePipelineWrapper, log
-
-from components.pipelines import create_document_store, create_query_pipeline
+from hayhooks import (
+    BasePipelineWrapper,
+    get_last_user_message,
+    log,
+    streaming_generator,
+)
 
 # LOGGING
 logging.basicConfig(format="%(levelname)s - %(name)s - %(message)s", level=logging.WARNING)
