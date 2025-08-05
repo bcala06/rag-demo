@@ -37,6 +37,6 @@ class PipelineWrapper(BasePipelineWrapper):
             saved_file_paths.append(file_path)
         
         for file_path in saved_file_paths:
-            self.pipeline.run({"converter": {"sources": [file_path]}})
+            self.pipeline.run({"router": {"sources": [file_path]}})
         
         return "Files indexed successfully"

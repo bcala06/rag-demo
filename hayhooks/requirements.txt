@@ -1,5 +1,7 @@
-tiktoken
 tika
+pandas
+openpyxl
+tiktoken
 nltk
 hayhooks
 haystack-ai

@@ -4,8 +4,11 @@ from pathlib import Path
 from haystack import Pipeline
 from haystack.components.builders import ChatPromptBuilder
 from haystack.components.converters import TikaDocumentConverter
+from haystack.components.converters.xlsx import XLSXToDocument
+from haystack.components.joiners import DocumentJoiner
 from haystack.components.preprocessors import DocumentCleaner, RecursiveDocumentSplitter
 from haystack.components.rankers import MetaFieldRanker
+from haystack.components.routers import FileTypeRouter
 from haystack.components.writers import DocumentWriter
 from haystack.dataclasses import ChatMessage
 from haystack.document_stores.types import DuplicatePolicy
@@ -61,8 +64,18 @@ def create_document_store() -> QdrantDocumentStore:
 def create_index_pipeline() -> Pipeline:
     document_store = create_document_store()
 
-    converter = TikaDocumentConverter(tika_url=tika_url)
+    # file type router to separate xlsx
+    router = FileTypeRouter(
+        mime_types=["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
+        additional_mimetypes={"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx"},
+    )
+
+    # converters for different xlsx/others
+    tika_converter = TikaDocumentConverter(tika_url=tika_url)
+    xlsx_converter = XLSXToDocument()
+
     cleaner = DocumentCleaner(remove_repeated_substrings=True)
+    joiner = DocumentJoiner()
 
     chunker = RecursiveDocumentSplitter(
         split_length=1000,
@@ -94,15 +107,25 @@ def create_index_pipeline() -> Pipeline:
     )
 
     indexing_pipeline = Pipeline()
-    indexing_pipeline.add_component("converter", converter)
+    indexing_pipeline.add_component("router", router)
+    indexing_pipeline.add_component("tika_converter", tika_converter)
+    indexing_pipeline.add_component("xlsx_converter", xlsx_converter)
     indexing_pipeline.add_component("cleaner", cleaner)
+    indexing_pipeline.add_component("joiner", joiner)
     indexing_pipeline.add_component("chunker", chunker)
     indexing_pipeline.add_component("dense_embedder", dense_doc_embedder)
     indexing_pipeline.add_component("sparse_embedder", sparse_doc_embedder)
     indexing_pipeline.add_component("writer", writer)
 
-    indexing_pipeline.connect("converter.documents", "cleaner.documents")
-    indexing_pipeline.connect("cleaner.documents", "chunker.documents")
+    # connect the router to converters
+    indexing_pipeline.connect("router.application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx_converter.sources")
+    indexing_pipeline.connect("router.unclassified", "tika_converter.sources")
+    indexing_pipeline.connect("tika_converter.documents", "cleaner.documents")
+    
+    # continue pipeline
+    indexing_pipeline.connect("cleaner.documents", "joiner.documents")
+    indexing_pipeline.connect("xlsx_converter.documents", "joiner.documents")
+    indexing_pipeline.connect("joiner.documents", "chunker.documents")
     indexing_pipeline.connect("chunker.documents", "dense_embedder.documents")
     indexing_pipeline.connect("dense_embedder.documents", "sparse_embedder.documents")
     indexing_pipeline.connect("sparse_embedder.documents", "writer.documents")
