@@ -91,7 +91,7 @@ def process_upload(file_objs) -> tuple[str, list]:
     try:
         file_paths = [file_obj.name for file_obj in file_objs]
         result = upload_files(file_paths)
-        output_msg = f"Files uploaded: {', '.join(file_paths)}\n\nIndexing API Response: {result}\n\n"
+        output_msg = f"Indexing API Response: {result}"
         return output_msg, []
     except Exception as e:
         return f"Upload failed: {str(e)}", []

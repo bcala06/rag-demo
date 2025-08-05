@@ -8,14 +8,14 @@ This project is a Retrieval-Augmented Generation (RAG) proof-of-concept that com
 - [Hayhooks](https://github.com/deepset-ai/hayhooks) is used to manage the API for the pipeline.
 - [Gradio](https://www.gradio.app/) is used for the interface for the Hayhooks and Qdrant endpoints.
 
-| Component                | Model                                     | Source                                                |
-| ------------------------ | ----------------------------------------- | ----------------------------------------------------- |
-| Vector Storage/Retriever | Qdrant Vector Database                    | [Qdrant](https://qdrant.tech/qdrant-vector-database/) |
-| Document Converter       | Tika                                      | [Apache](https://tika.apache.org/)                    |
-| Dense Embedder           | `nomic-embed-text:v1.5`                   | [Ollama](https://ollama.com/library/nomic-embed-text) |
-| Sparse Embedder          | `Qdrant/bm42-all-minilm-l6-v2-attentions` | [FastEmbed](https://github.com/qdrant/fastembed)      |
-| Reranker                 | `jinaai/jina-reranker-v1-turbo-en`        | [FastEmbed](https://github.com/qdrant/fastembed)      |
-| Generator                | `deepseek-r1:latest`                      | [Ollama](https://ollama.com/library/deepseek-r1)      |
+| Component                | Model                              | Source                                                 |
+| ------------------------ | ---------------------------------- | ------------------------------------------------------ |
+| Vector Storage/Retriever | Qdrant Vector Database             | [Qdrant](https://qdrant.tech/qdrant-vector-database/)  |
+| Document Converter       | Tika                               | [Apache](https://tika.apache.org/)                     |
+| Dense Embedder           | `granite-embedding:30m`            | [Ollama](https://ollama.com/library/granite-embedding) |
+| Sparse Embedder          | `Qdrant/bm25`                      | [FastEmbed](https://github.com/qdrant/fastembed)       |
+| Reranker                 | `jinaai/jina-reranker-v1-turbo-en` | [FastEmbed](https://github.com/qdrant/fastembed)       |
+| Generator                | `gemma3n:e2b`                      | [Ollama](https://ollama.com/library/gemma3n)           |
 
 ## Getting Started
 

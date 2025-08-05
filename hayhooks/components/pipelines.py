@@ -34,13 +34,13 @@ qdrant_url = os.getenv("QDRANT_URL", "http://localhost:6333")
 tika_url = os.getenv("TIKA_URL", "http://localhost:9998/tika")
 
 embedding_name = "index"
-embedding_dim = 768
+embedding_dim = 384
 
-dense_embedder_model = "nomic-embed-text:v1.5"
-sparse_embedder_model = "Qdrant/bm42-all-minilm-l6-v2-attentions"
+dense_embedder_model = "granite-embedding:30m"
+sparse_embedder_model = "Qdrant/bm25"
 
 ranker_model = "jinaai/jina-reranker-v1-turbo-en"
-generator_model = "deepseek-r1:latest"
+generator_model = "gemma3n:e2b"
 
 
 ###################################################################################################
@@ -62,7 +62,7 @@ def create_index_pipeline() -> Pipeline:
     document_store = create_document_store()
 
     converter = TikaDocumentConverter(tika_url=tika_url)
-    cleaner = DocumentCleaner()
+    cleaner = DocumentCleaner(remove_repeated_substrings=True)
 
     chunker = RecursiveDocumentSplitter(
         split_length=1000,
@@ -161,7 +161,7 @@ def create_query_pipeline() -> Pipeline:
             "temperature": 0.5,
             "n_ctx": 8192,
         },
-        think=True,
+        # think=True, # enable only if model supports thinking (e.g. deepseek-r1) 
     )
 
     query_pipeline = Pipeline()
