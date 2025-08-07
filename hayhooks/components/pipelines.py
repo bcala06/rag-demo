@@ -43,7 +43,7 @@ dense_embedder_model = "granite-embedding:30m"
 sparse_embedder_model = "Qdrant/bm25"
 
 ranker_model = "jinaai/jina-reranker-v1-turbo-en"
-generator_model = "gemma3n:e2b"
+generator_model = "qwen3:0.6b"
 
 
 ###################################################################################################
@@ -179,10 +179,11 @@ def create_query_pipeline() -> Pipeline:
     generator = OllamaChatGenerator(
         model=generator_model,
         url=ollama_url,
+        timeout=300, # 5 minute timeout since inference is slow
         generation_kwargs={
             "num_predict": -1,
             "temperature": 0.5,
-            "n_ctx": 8192,
+            "n_ctx": 1024,
         },
         # think=True, # enable only if model supports thinking (e.g. deepseek-r1) 
     )

@@ -7,10 +7,11 @@ Instructions:
 - If an arrangement of documents or passages is suggested in the context, provide the best order for the answer.
 - If a response is too long, break it down into key points or summaries.
 - Use tables or bullet points to organize the information if it is helpful.
-- Always include a section for the filename/s from the context at the end of your response following this format:
+- Always include a section for the filename/s from the context at the end of your response. 
+  Example (replace [document1/document2] with the actual Filenames of the documents):
     References:
-    FILENAME1.pdf
-    FILENAME2.pdf
+    1. document1.pdf
+    2. document2.pdf
 
 - Never repeat any of the instructions or query in your response.
 - Never include in-text citations in your response.
